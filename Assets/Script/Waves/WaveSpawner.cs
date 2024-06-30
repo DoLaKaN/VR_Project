@@ -21,9 +21,19 @@ public class WaveSpawner : MonoBehaviour
     {
         public string Name;
         public Enemy[] Enemies;
+        public int EnemyCountBase;
+        internal int EnemyCount;
+        public float RateBase;
+        internal float rate;
+        public int EnemyCountIncrease;
+        public float RateIncrease;
+
+        public Wave()
+        {
+            EnemyCount = EnemyCountBase;
+            rate = RateBase;
+        }
         
-        public int count;
-        public float rate;
     }
     public Wave wave;
     public Transform[] spawnPoints;
@@ -57,6 +67,7 @@ public class WaveSpawner : MonoBehaviour
         {
             if (!EnemyIsalive())
             {
+                
                 WaveCompleted();
             }
             else
@@ -109,6 +120,16 @@ public class WaveSpawner : MonoBehaviour
             wave.Enemies[i].EnemyHealthAttributeComponent.maxHealth = healthFormula;
             wave.Enemies[i].EnemyDamageComponent.DamageValue = damageFormula;
         }
+        var baseEnemyCount = wave.EnemyCountBase;
+        var baseRate = wave.RateBase;
+        var enemyCountIncrease = wave.EnemyCountIncrease;
+        var rateIncrease = wave.RateIncrease;
+
+        var enemyCountFormula = baseEnemyCount + (enemyCountIncrease * waveNumber);
+        var rateCountFormula = baseRate + (rateIncrease * waveNumber);
+
+        wave.EnemyCount = enemyCountFormula;
+        wave.rate = rateCountFormula;
     }
 
     bool EnemyIsalive()
@@ -117,7 +138,7 @@ public class WaveSpawner : MonoBehaviour
         if (searchCountdown <= 0f)
         {
             searchCountdown = 1f;
-            if (GameObject.FindGameObjectsWithTag("Enemy") == null)
+            if (GameObject.FindGameObjectWithTag("Enemy") == null)
             {
                 return false;
             }
@@ -129,7 +150,7 @@ public class WaveSpawner : MonoBehaviour
     IEnumerator SpawnWave(Wave wave)
     {
         state = SpawnState.SPAWNING;
-        for(int i = 0; i < wave.count; i++)
+        for(int i = 0; i < wave.EnemyCount; i++)
         {
             SpawnEnemy(wave.Enemies[ Random.Range(0, wave.Enemies.Length) ].EnemyTransform);
             yield return new WaitForSeconds(1f / wave.rate);

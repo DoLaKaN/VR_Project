@@ -7,11 +7,13 @@ public class PlayerControls : MonoBehaviour
 {
 
     public PlayerStats stats;
+    public GameObject gun;
 
     void Start()
     {
         
     }
+
     
     void Update()
     {
@@ -21,41 +23,18 @@ public class PlayerControls : MonoBehaviour
         transform.position = new Vector3(transform.position.x+ directionX, 0.75f , transform.position.z + directionY);
 
         AimToClosestEnemy();
-
-
-        /*
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.position.(Vector3.forward * speed *Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.S)) 
-        {
-            transform.Translate(Vector3.back * speed * Time.deltaTime );
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Translate( Vector3.right *speed *Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.A)) 
-        {
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
-        }
-        */
         
     }
 
-    private void AimToClosestEnemy()
+    public void AimToClosestEnemy()
     {
         float distanceToClosestEnemy = Mathf.Infinity;
         GameObject ClosestEnemy = null;
-
-
 
         GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach (GameObject currentEnemy in allEnemies)
         {
-
 
             Debug.Log(currentEnemy);
             float distacneToEnemy = (currentEnemy.transform.position - this.transform.position).sqrMagnitude;
@@ -65,12 +44,9 @@ public class PlayerControls : MonoBehaviour
                 ClosestEnemy = currentEnemy;
             }
             this.transform.LookAt(ClosestEnemy.transform.position);
+            gun.transform.LookAt (ClosestEnemy.transform.position);
         }
+        
     }
 
-
-
-
-
 }
-

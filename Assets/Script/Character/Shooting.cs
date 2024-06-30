@@ -5,39 +5,40 @@ using UnityEngine;
 
 public class Shooting : MonoBehaviour
 {
+    // Start is called before the first frame update
     void Start()
     {
         
     }
+
+    // Update is called once per frame
     void Update()
     {
-        //AimToClosestEnemy();
+        AimToClosestEnemy();
+        
     }
 
 
-    /*
+
     private void AimToClosestEnemy()
     {
         float distanceToClosestEnemy = Mathf.Infinity;
-        GameObject ClosestEnemy = null;
+        enemy ClosestEnemy = null;
 
        
 
-        GameObject [] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemy[] allEnemies = GameObject.FindObjectsOfType<enemy>();
 
-            foreach (GameObject currentEnemy in allEnemies)
-                {
-
-
-                    Debug.Log(currentEnemy);
-                    float distacneToEnemy = (currentEnemy.transform.position - this.transform.position).sqrMagnitude;
-                    if(distacneToEnemy < distanceToClosestEnemy)
-                    {
-                        distanceToClosestEnemy = distacneToEnemy;
-                        ClosestEnemy = currentEnemy;
-                    }
-            this.transform.LookAt(ClosestEnemy.transform.position);
-        } 
+        foreach (enemy currentEnemy in allEnemies)
+        {
+            float distacneToEnemy = (currentEnemy.transform.position - this.transform.position).sqrMagnitude;
+            if(distacneToEnemy < distanceToClosestEnemy)
+            {
+                distanceToClosestEnemy = distacneToEnemy;
+                ClosestEnemy = currentEnemy;
+            }
+        }
+        transform.LookAt(ClosestEnemy.transform.position);
     }
 
 
@@ -46,5 +47,5 @@ public class Shooting : MonoBehaviour
 
     }
 
-    */
+
 }
