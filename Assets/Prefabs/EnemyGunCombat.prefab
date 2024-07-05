@@ -406,6 +406,7 @@ MonoBehaviour:
   maxHealth: 100
   expValue: 10
   currentEnemyHealth: 20
+  score: {fileID: 0}
 --- !u!114 &-5290127528768111439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b54e75ffd1fbe43812c05eb352f0fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageValue: 30
+  DamageValue: 100
 --- !u!54 &6033142351433475823
 Rigidbody:
   m_ObjectHideFlags: 0

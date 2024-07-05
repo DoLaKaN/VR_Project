@@ -1,26 +1,37 @@
+using Script.Character;
 using Script.Health;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Projectals : MonoBehaviour
 {
-    public int damage;
-    public float speed;
-    public float cooldown;
-    public float LiveTime;
-    public float size;
+    public PlayerStats playerStats;
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("kolizja");
-        if (other.CompareTag("Enemy")){ 
-            Debug.Log("trafiony");
+
+
+        if (other.CompareTag("Enemy"))
+        {
             var Enemy = other.gameObject.GetComponent<EnemyHealthAttribute>();
-            Enemy.DealDamage(damage);
-    }
+            Enemy.DealDamage(playerStats.damage);
+            /*
+            if (playerStats.penetration >= 1)
+            {
+                Enemy.DealDamage(playerStats.damage);
+                playerStats.penetration -= 1;
+            }
+            if (playerStats.penetration <= 0)
+            {
+                Enemy.DealDamage(playerStats.damage);
+                Destroy(this.gameObject);
+            }
+            */
+        }
     }
 
-    }
+}
 

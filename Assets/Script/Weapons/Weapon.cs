@@ -1,39 +1,43 @@
+using Script.Character;
+using Script.Exp;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public Projectals Projectal;
-    //public Projectals Projectal1;
-    public GameObject GunPosition;
+    public GameObject[] typeOfWeapon;
+    public Projectals projectal;
+    public PlayerStats playerStats;
+    public GameObject[] gunsPositions;
+
     private float time;
 
     void Update()
     {
         Fire();
-        //Debug.Log("damage " + Projectal.damage);
     }
-    
+
     void Fire()
     {
-        time += Time.deltaTime;
-        //Debug.Log("time: " + time);
-        //Debug.Log("cd: " + Projectal.cooldown);
-        
 
-        if (time >= Projectal.cooldown)
+        if (GameObject.FindGameObjectWithTag("Enemy"))
         {
-            time = 0;
-            GameObject bullet = Instantiate(Projectal.gameObject, GunPosition.transform.position, GunPosition.transform.rotation) as GameObject;
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            rb.velocity = bullet.transform.forward * Projectal.speed;
-            Destroy(bullet, Projectal.LiveTime);
+            time += Time.deltaTime;
 
+            if (time >= playerStats.cooldown)
+            {
+                time = 0;
+                for (int x = 0; x < gunsPositions.Length; x++)
+                {
+                    GameObject bullet = Instantiate(projectal.gameObject, gunsPositions[x].transform.position, gunsPositions[x].transform.rotation) as GameObject;
+                    Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                    rb.velocity = bullet.transform.forward * playerStats.projectalSpeed;
+                    Destroy(bullet, playerStats.LiveTime);
+                }
+
+            }
         }
-
-
-
     }
-    
+
 }

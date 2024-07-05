@@ -1,51 +1,49 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
     public enum SpawnState { SPAWNING, WAITING, COUNTING };
-    public GameObject Target;
     [System.Serializable]
     public class Enemy
     {
-        public Transform EnemyTransform;
-        public Damage EnemyDamageComponent;
-        public HealthAttribute EnemyHealthAttributeComponent;
-        public int HealthBase;
-        public int DamageBase;
-        public int HealthIncreasePerWave;
-        public int DamageIncreasePerWave;
+        [SerializeField] internal Transform EnemyTransform;
+        [SerializeField] internal Damage EnemyDamageComponent;
+        [SerializeField] internal HealthAttribute EnemyHealthAttributeComponent;
+        [SerializeField] internal int HealthBase;
+        [SerializeField] internal int DamageBase;
+        [SerializeField] internal int HealthIncreasePerWave;
+        [SerializeField] internal int DamageIncreasePerWave;
     }
     [System.Serializable]
     public class Wave
     {
-        public string Name;
-        public Enemy[] Enemies;
-        public int EnemyCountBase;
+        [SerializeField] string Name;
+        [SerializeField] internal Enemy[] Enemies;
+        [SerializeField] internal int EnemyCountBase;
         internal int EnemyCount;
-        public float RateBase;
+        [SerializeField] internal float RateBase;
         internal float rate;
-        public int EnemyCountIncrease;
-        public float RateIncrease;
-
-        public Wave()
-        {
-            EnemyCount = EnemyCountBase;
-            rate = RateBase;
-        }
-        
+        [SerializeField] internal int EnemyCountIncrease;
+        [SerializeField] internal float RateIncrease;       
     }
-    public Wave wave;
-    public Transform[] spawnPoints;
-    private int round = 1;
+    [SerializeField] GameObject Target;
+    [SerializeField] Wave wave;
+    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] float timeBetweenWaves = 5f;
+    [SerializeField] TextMeshProUGUI TextRoundCounter;
+    [SerializeField] TextMeshProUGUI TextWaveCounter;
+    [SerializeField] SpawnState state = SpawnState.COUNTING;
 
-    public float timeBetweenWaves = 5f;
-    private float waveCountdown;
-    private float searchCountdown = 5f;
-    public SpawnState state = SpawnState.COUNTING;
+    private int _round = 1;
+    private float _waveCountdown;
+    private float _searchCountdown = 5f;
+    
     private void Awake()
     {
-
+        wave.EnemyCount = wave.EnemyCountBase;
+        wave.rate = wave.RateBase;
         for (int i = 0; i < wave.Enemies.Length; i++)
         {
             wave.Enemies[i].EnemyHealthAttributeComponent.maxHealth = wave.Enemies[i].HealthBase;
@@ -58,54 +56,59 @@ public class WaveSpawner : MonoBehaviour
         {
             Debug.LogError("There is no spawn points");
         }
-       waveCountdown = timeBetweenWaves;
+       _waveCountdown = timeBetweenWaves;
     }
 
     private void Update()
     {
+        printWaveNumber();
         if (state == SpawnState.WAITING) 
         {
-            if (!EnemyIsalive())
+            if (!enemyIsAlive())
             {
                 
-                WaveCompleted();
+                waveCompleted();
             }
             else
             {
                 return;
             }
         }
-        if (waveCountdown <= 0)
-        {
+        if (_waveCountdown <= 0)
+        {   
+            TextRoundCounter.gameObject.SetActive(false);
             if (state != SpawnState.SPAWNING)
             {
-                StartCoroutine(SpawnWave(wave));
-            }
+                StartCoroutine(spawnWave(wave));
+            }          
         }
         else
         {
-            waveCountdown -= Time.deltaTime;
+            TextRoundCounter.gameObject.SetActive(true);
+            printCountdownTimer();
+            _waveCountdown -= Time.deltaTime;
         }
     }
 
-    void WaveCompleted()
+    private void printCountdownTimer()
+    {
+        var text = (int)_waveCountdown;
+        TextRoundCounter.text = "Round starts in: " + text.ToString();
+    }
+
+    private void printWaveNumber()
+    {
+        TextWaveCounter.text = "Wave: " + _round.ToString();
+    }
+    private void waveCompleted()
     {
         Debug.Log("Wave complete");
         state = SpawnState.COUNTING;
-        waveCountdown = timeBetweenWaves;
-        //if(nextWave +1 > waves.Length - 1)
-        //{
-        //    nextWave = 0;
-        //    Debug.Log("All waves complete");
-        //}
-        //else
-        //{
-        increaseDifficultyWave(round);
-        round++;
-        //}
-        
+        _waveCountdown = timeBetweenWaves;
+        increaseDifficultyWave(_round);
+        _round++;
     }
-    void increaseDifficultyWave(int waveNumber)
+    private void increaseDifficultyWave(int waveNumber)
     {
         for (int i = 0; i < wave.Enemies.Length; i++)
         {
@@ -114,30 +117,24 @@ public class WaveSpawner : MonoBehaviour
             var healthIncrease = wave.Enemies[i].HealthIncreasePerWave; 
             var damageIncrease = wave.Enemies[i].DamageIncreasePerWave;
 
-            var healthFormula = baseHealth + (healthIncrease * waveNumber);
-            var damageFormula = baseDamage + (damageIncrease * waveNumber);
-
-            wave.Enemies[i].EnemyHealthAttributeComponent.maxHealth = healthFormula;
-            wave.Enemies[i].EnemyDamageComponent.DamageValue = damageFormula;
+            wave.Enemies[i].EnemyHealthAttributeComponent.maxHealth = baseHealth + (healthIncrease * waveNumber);
+            wave.Enemies[i].EnemyDamageComponent.DamageValue = baseDamage + (damageIncrease * waveNumber);
         }
         var baseEnemyCount = wave.EnemyCountBase;
         var baseRate = wave.RateBase;
         var enemyCountIncrease = wave.EnemyCountIncrease;
         var rateIncrease = wave.RateIncrease;
 
-        var enemyCountFormula = baseEnemyCount + (enemyCountIncrease * waveNumber);
-        var rateCountFormula = baseRate + (rateIncrease * waveNumber);
-
-        wave.EnemyCount = enemyCountFormula;
-        wave.rate = rateCountFormula;
+        wave.EnemyCount = baseEnemyCount + (enemyCountIncrease * waveNumber);
+        wave.rate = baseRate + (rateIncrease * waveNumber);
     }
 
-    bool EnemyIsalive()
+    private bool enemyIsAlive()
     {
-        searchCountdown -= Time.deltaTime;
-        if (searchCountdown <= 0f)
+        _searchCountdown -= Time.deltaTime;
+        if (_searchCountdown <= 0f)
         {
-            searchCountdown = 1f;
+            _searchCountdown = 1f;
             if (GameObject.FindGameObjectWithTag("Enemy") == null)
             {
                 return false;
@@ -147,19 +144,19 @@ public class WaveSpawner : MonoBehaviour
         return true;
     }
 
-    IEnumerator SpawnWave(Wave wave)
+    IEnumerator spawnWave(Wave wave)
     {
         state = SpawnState.SPAWNING;
         for(int i = 0; i < wave.EnemyCount; i++)
         {
-            SpawnEnemy(wave.Enemies[ Random.Range(0, wave.Enemies.Length) ].EnemyTransform);
+            spawnEnemy(wave.Enemies[ Random.Range(0, wave.Enemies.Length) ].EnemyTransform);
             yield return new WaitForSeconds(1f / wave.rate);
         }
 
         state = SpawnState.WAITING;
         yield break;
     }
-    void SpawnEnemy(Transform enemy)
+    private void spawnEnemy(Transform enemy)
     {
         Debug.Log("spawn enemy");
         enemy.GetComponent<EnemyRush>().Target = Target;

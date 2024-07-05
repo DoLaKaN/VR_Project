@@ -13,15 +13,16 @@ namespace Script.Exp
     
     public class ExpAttribute : MonoBehaviour
     {
-        public int expForNextLvl = 100;
+        public int expForNextLvl = 500;
         public int currentExp;
         public int level = 1;
-        List<Upgrades> upgrades = new List<Upgrades> { Upgrades.Health, Upgrades.Speed };
+        //List<Upgrades> upgrades = new List<Upgrades> { Upgrades.Health, Upgrades.Speed };
         private int lastUpgrade = 0;
         public PlayerHealthAttribute healthAttribute;
         public PlayerStats stats;
         public int healthUpgrade = 100;
         public float speedUpgrade = 2;
+        public GameObject skillTree;
 
         public int CurrentExp
         {
@@ -52,6 +53,10 @@ namespace Script.Exp
             currentExp -= expForNextLvl;
             healthAttribute.RenewHealth();
 
+            skillTree.SetActive(true);
+
+
+            /*
             switch (upgrades[lastUpgrade])
             {
                 case Upgrades.Health:
@@ -61,8 +66,9 @@ namespace Script.Exp
                     stats.speed += speedUpgrade;
                     break;
             }
+            */
 
-            lastUpgrade = lastUpgrade >= upgrades.Count - 1 ? 0 : lastUpgrade + 1;
+            //lastUpgrade = lastUpgrade >= upgrades.Count - 1 ? 0 : lastUpgrade + 1;
         }
     }
 }

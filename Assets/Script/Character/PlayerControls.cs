@@ -15,7 +15,7 @@ public class PlayerControls : MonoBehaviour
     }
 
     
-    void Update()
+    void FixedUpdate()
     {
         float directionX= Input.GetAxis("Horizontal") * stats.speed * Time.deltaTime;
         float directionY= Input.GetAxis("Vertical")* stats.speed * Time.deltaTime;

@@ -1,4 +1,5 @@
 using Script.Exp;
+using Script.Score;
 using UnityEngine;
 
 namespace Script.Health
@@ -7,8 +8,8 @@ namespace Script.Health
     {
         public int expValue = 10;
         public int currentEnemyHealth = 20;
-
-
+        public ScoreAttribute score;
+        
         private void Update()
         {
             if (currentEnemyHealth <= 0)
@@ -21,6 +22,7 @@ namespace Script.Health
 
         public override void Start()
         {
+            score = FindObjectOfType<ScoreAttribute>();
             base.Start();
         }
 
@@ -28,6 +30,7 @@ namespace Script.Health
         {
             var player = GameObject.FindGameObjectWithTag("Player");
             player.GetComponent<ExpAttribute>().GainExp(expValue);
+            score.AddToScore();
             base.KillCharacter();
             Destroy(this.gameObject);
         }
