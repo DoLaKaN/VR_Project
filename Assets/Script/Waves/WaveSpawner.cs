@@ -66,7 +66,7 @@ public class WaveSpawner : MonoBehaviour
         {
             if (!enemyIsAlive())
             {
-                
+                AudioManager.Instance.PlayMusic("Theme");
                 waveCompleted();
             }
             else
@@ -79,11 +79,12 @@ public class WaveSpawner : MonoBehaviour
             TextRoundCounter.gameObject.SetActive(false);
             if (state != SpawnState.SPAWNING)
             {
+                AudioManager.Instance.PlayMusic("Round");
                 StartCoroutine(spawnWave(wave));
             }          
         }
         else
-        {
+        {           
             TextRoundCounter.gameObject.SetActive(true);
             printCountdownTimer();
             _waveCountdown -= Time.deltaTime;
